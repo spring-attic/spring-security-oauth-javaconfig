@@ -1,0 +1,12 @@
+rootProject.name = 'spring-security-oauth-javaconfig'
+
+include "spring-security-oauth2-javaconfig"
+
+def samplesDirName = "samples"
+File samplesDir = new File(rootDir, samplesDirName)
+samplesDir.eachDir { sampleDir ->
+    def moduleName = "samples/$sampleDir.name"
+    include moduleName
+    def p = findProject(":$moduleName")
+    p.name = "spring-security-oauth2-samples-$sampleDir.name"
+}
