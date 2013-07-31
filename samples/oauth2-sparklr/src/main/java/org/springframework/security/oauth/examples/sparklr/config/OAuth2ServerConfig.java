@@ -68,7 +68,7 @@ public class OAuth2ServerConfig extends OAuth2ServerConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeUrls()
+            .authorizeRequests()
                 .antMatchers("/oauth/token").fullyAuthenticated()
 
                 .regexMatchers(HttpMethod.DELETE, "/oauth/users/([^/].*?)/tokens/.*")

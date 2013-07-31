@@ -48,7 +48,7 @@ public class OAuth2ServerConfigurerAdapterTestsConfigs {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http
-                .authorizeUrls()
+                .authorizeRequests()
                     .anyRequest().hasRole("USER")
                     .and()
                 .apply(new OAuth2ServerConfigurer())
