@@ -87,6 +87,11 @@ public final class OAuth2ServerConfigurer extends SecurityConfigurerAdapter<Defa
         return tokenServices;
     }
 
+    public OAuth2ServerConfigurer tokenStore(TokenStore tokenStore) {
+        this.tokenStore = tokenStore;
+        return this;
+    }
+
     @Override
     public void init(HttpSecurity http) throws Exception {
         registerDefaultAuthenticationEntryPoint(http);
