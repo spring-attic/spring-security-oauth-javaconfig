@@ -30,6 +30,9 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+import org.springframework.security.web.context.NullSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
 
 /**
  * @author Rob Winch
@@ -61,5 +64,19 @@ class OAuth2ServerConfigurerAdapterTests extends BaseSpringSpec {
         then: "OAuth authentication required"
             response.status == HttpServletResponse.SC_UNAUTHORIZED
             response.getHeader("WWW-Authenticate") == 'Bearer realm="oauth", error="unauthorized", error_description="Full authentication is required to access this resource"'
+    }
+
+    def "OAuth2ServerConfigurer disables csrf"() {
+        when:
+            loadConfig(OAuth2ServerConfigurerDefaultsConfig)
+        then:
+            !findFilter(CsrfFilter)
+    }
+
+    def "OAuth2ServerConfigurer is stateless"() {
+        when:
+            loadConfig(OAuth2ServerConfigurerDefaultsConfig)
+        then:
+            findFilter(SecurityContextPersistenceFilter).repo.class == NullSecurityContextRepository
     }
 }

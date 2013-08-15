@@ -25,8 +25,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
@@ -55,6 +53,7 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.NullSecurityContextRepository;
 import org.springframework.security.web.util.MediaTypeRequestMatcher;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
@@ -95,10 +94,12 @@ public final class OAuth2ServerConfigurer extends SecurityConfigurerAdapter<Defa
     @Override
     public void init(HttpSecurity http) throws Exception {
         registerDefaultAuthenticationEntryPoint(http);
-
-        if(http.getConfigurer(HttpBasicConfigurer.class) == null) {
-            http.httpBasic();
-        }
+        http
+            .securityContext()
+                .securityContextRepository(new NullSecurityContextRepository())
+                .and()
+            .csrf().disable()
+            .httpBasic();
     }
 
     @SuppressWarnings("unchecked")
@@ -124,9 +125,6 @@ public final class OAuth2ServerConfigurer extends SecurityConfigurerAdapter<Defa
     @Override
     @SuppressWarnings("unchecked")
     public void configure(HttpSecurity http) throws Exception {
-
-        http.getConfigurer(ExpressionUrlAuthorizationConfigurer.class).expressionHandler(expressionHandler);
-
         clientCredentialsTokenEndpointFilter = new ClientCredentialsTokenEndpointFilter();
         clientCredentialsTokenEndpointFilter.setAuthenticationManager(http
                 .getAuthenticationManager());
@@ -140,13 +138,15 @@ public final class OAuth2ServerConfigurer extends SecurityConfigurerAdapter<Defa
         this.tokenGranter = tokenGranter(http);
         this.consumerTokenServices = consumerTokenServices(http);
 
-        http.
-            getConfigurer(ExceptionHandlingConfigurer.class)
-                .accessDeniedHandler(accessDeniedHandler);
 
         http
+            .authorizeRequests()
+                .expressionHandler(expressionHandler)
+                .and()
             .addFilterBefore(resourcesServerFilter, AbstractPreAuthenticatedProcessingFilter.class)
-            .addFilterBefore(clientCredentialsTokenEndpointFilter, BasicAuthenticationFilter.class);
+            .addFilterBefore(clientCredentialsTokenEndpointFilter, BasicAuthenticationFilter.class)
+            .getConfigurer(ExceptionHandlingConfigurer.class)
+                .accessDeniedHandler(accessDeniedHandler);
 
     }
 

@@ -55,4 +55,33 @@ public class OAuth2ServerConfigurerAdapterTestsConfigs {
                     .resourceId(APP_NAME);
         }
     }
+
+    @Configuration
+    @EnableWebSecurity
+    static class OAuth2ServerConfigurerDefaultsConfig extends OAuth2ServerConfigurerAdapter {
+        static String APP_NAME = "app";
+
+        @Override
+        protected void registerAuthentication(AuthenticationManagerBuilder auth)
+                throws Exception {
+            auth
+                .apply(new InMemoryClientDetailsServiceConfigurer())
+                    .withClient("android-crm")
+                        .resourceIds(APP_NAME)
+                        .scopes("read","write")
+                        .authorities("ROLE_USER")
+                        .secret("123456")
+                        .authorizedGrantTypes("authorization_code","implicit","password");
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                .authorizeRequests()
+                    .anyRequest().hasRole("USER")
+                    .and()
+                .apply(new OAuth2ServerConfigurer())
+                    .resourceId(APP_NAME);
+        }
+    }
 }
