@@ -125,9 +125,9 @@ public final class OAuth2ServerConfigurer extends SecurityConfigurerAdapter<Defa
     @Override
     @SuppressWarnings("unchecked")
     public void configure(HttpSecurity http) throws Exception {
+        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
         clientCredentialsTokenEndpointFilter = new ClientCredentialsTokenEndpointFilter();
-        clientCredentialsTokenEndpointFilter.setAuthenticationManager(http
-                .getAuthenticationManager());
+        clientCredentialsTokenEndpointFilter.setAuthenticationManager(authenticationManager);
         clientCredentialsTokenEndpointFilter = postProcess(clientCredentialsTokenEndpointFilter);
 
         AuthenticationManager oauthAuthenticationManager = oauthAuthenticationManager(http);
@@ -197,7 +197,7 @@ public final class OAuth2ServerConfigurer extends SecurityConfigurerAdapter<Defa
     }
 
     private AuthenticationManager authenticationManager(HttpSecurity http) {
-        return http.getAuthenticationManager();
+        return http.getSharedObject(AuthenticationManager.class);
     }
 
     public TokenGranter getTokenGranter() {
