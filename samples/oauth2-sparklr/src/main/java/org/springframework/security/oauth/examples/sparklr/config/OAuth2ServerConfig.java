@@ -38,7 +38,7 @@ public class OAuth2ServerConfig extends OAuth2ServerConfigurerAdapter {
     private static final String SPARKLR_RESOURCE_ID = "sparklr";
 
     @Override
-    protected void registerAuthentication(AuthenticationManagerBuilder auth)
+    protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
         auth
             .apply(new InMemoryClientDetailsServiceConfigurer())

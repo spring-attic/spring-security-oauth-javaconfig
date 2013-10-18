@@ -17,7 +17,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private OAuth2ClientContextFilter oauth2ClientFilter;
 
     @Override
-    protected void registerAuthentication(
+    protected void configure(
             AuthenticationManagerBuilder auth) throws Exception {
         auth
             .inMemoryAuthentication()
