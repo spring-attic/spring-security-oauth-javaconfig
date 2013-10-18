@@ -33,7 +33,7 @@ public class OAuth2ServerConfigurerAdapterTestsConfigs {
         static String APP_NAME = "app";
 
         @Override
-        protected void registerAuthentication(AuthenticationManagerBuilder auth)
+        protected void configure(AuthenticationManagerBuilder auth)
                 throws Exception {
             auth
                 .apply(new InMemoryClientDetailsServiceConfigurer())
@@ -62,7 +62,7 @@ public class OAuth2ServerConfigurerAdapterTestsConfigs {
         static String APP_NAME = "app";
 
         @Override
-        protected void registerAuthentication(AuthenticationManagerBuilder auth)
+        protected void configure(AuthenticationManagerBuilder auth)
                 throws Exception {
             auth
                 .apply(new InMemoryClientDetailsServiceConfigurer())
